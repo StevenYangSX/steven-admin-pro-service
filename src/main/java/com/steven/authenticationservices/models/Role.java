@@ -1,10 +1,7 @@
 package com.steven.authenticationservices.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 
@@ -21,6 +18,11 @@ public class Role implements GrantedAuthority {
     private Integer roleId;
 
     private String authority;
+
+    public Role(String role) {
+        this.authority = role;
+    }
+
 
     @Override
     public String getAuthority() {
