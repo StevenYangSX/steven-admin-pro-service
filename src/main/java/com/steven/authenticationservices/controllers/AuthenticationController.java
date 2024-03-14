@@ -2,10 +2,13 @@ package com.steven.authenticationservices.controllers;
 
 import com.steven.authenticationservices.dto.LoginResponseDTO;
 import com.steven.authenticationservices.dto.RegisterDTO;
+import com.steven.authenticationservices.dto.ResponseDTO;
 import com.steven.authenticationservices.models.ApplicationUser;
 import com.steven.authenticationservices.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,7 +24,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    private LoginResponseDTO loginUser(@RequestBody RegisterDTO loginDTO) {
+    private ResponseDTO<LoginResponseDTO> loginUser(@RequestBody RegisterDTO loginDTO) throws ParseException {
         return authenticationService.loginUser(loginDTO.getUsername(), loginDTO.getPassword());
     }
 }

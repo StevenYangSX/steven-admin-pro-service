@@ -26,6 +26,7 @@ public class TokenService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
+
         JwtClaimsSet claims = JwtClaimsSet.builder().issuer("self").issuedAt(now).subject(authentication.getName())
                 .claim("roles",scope)
                 .build();
