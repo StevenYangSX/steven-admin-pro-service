@@ -11,7 +11,8 @@ import java.net.http.HttpResponse;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class ResponseDTO<T> {
-    private HttpStatus statusCode;
+    private Integer statusCode;
+    private String success;
     private String message;
     private T data;
 }

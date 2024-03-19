@@ -1,5 +1,7 @@
 package com.steven.authenticationservices.services;
 
+import com.steven.authenticationservices.customenum.ReturnMessageEnum;
+import com.steven.authenticationservices.customenum.SuccessFailedEnum;
 import com.steven.authenticationservices.dto.LoginResponseDTO;
 import com.steven.authenticationservices.dto.ResponseDTO;
 import com.steven.authenticationservices.models.ApplicationUser;
@@ -78,7 +80,10 @@ public class AuthenticationService {
                 tempMenuList,
                 tempAuthList);
 
-        return new ResponseDTO<>(HttpStatus.OK,"Success",loginResponseDTO);
+        return new ResponseDTO<>(HttpStatus.OK.value(),
+                SuccessFailedEnum.SUCCESS.getStringValue(),
+                ReturnMessageEnum.LOGIN_SUCCESS_MESSAGE.getStringValue(),
+                loginResponseDTO);
 
     }
 

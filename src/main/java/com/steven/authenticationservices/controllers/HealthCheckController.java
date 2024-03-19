@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckController {
     @GetMapping("/")
     public ResponseDTO healthCheck() {
-       return new ResponseDTO<>(HttpStatus.OK,"Success","Server is running...");
+       return new ResponseDTO<>(HttpStatus.OK.value(),"Success","Server is running...",null);
     }
 }
