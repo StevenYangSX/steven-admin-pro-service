@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLOutput;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
@@ -26,7 +26,14 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("In the user details services.....");
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found..."));
+
+        Optional<ApplicationUser> userDetails = userRepository.findByUsername(username);
+
+        if (userDetails.isPresent()) {
+            // TODO 查看权限 角色 等信息.....
+            return userDetails.get();
+        }
+        throw new UsernameNotFoundException("User not found...........");
+
     }
 }

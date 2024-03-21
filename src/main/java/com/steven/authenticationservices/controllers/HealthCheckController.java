@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/health")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class HealthCheckController {
-    @GetMapping("/")
+    @GetMapping(value = {"","/"})
     public ResponseDTO healthCheck() {
        return new ResponseDTO<>(HttpStatus.OK.value(),"Success","Server is running...",null);
     }

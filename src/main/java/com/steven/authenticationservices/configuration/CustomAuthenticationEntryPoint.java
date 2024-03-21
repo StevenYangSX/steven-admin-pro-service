@@ -20,7 +20,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_OK); // Set status code to 200
+        response.setStatus(200); // Set status code to 200
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(
                 new ResponseDTO<>(40000, SuccessFailedEnum.SUCCESS.getStringValue(),

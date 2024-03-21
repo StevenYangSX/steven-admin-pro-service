@@ -14,11 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.AuthenticationException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,7 +38,6 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -49,43 +48,34 @@ public class AuthenticationService {
     public ApplicationUser registerUser(String username, String password) {
         String encodedPassword = passwordEncoder.encode(password);
         Role userRole = roleRepository.findByAuthority("USER").get();
-
-        Set<Role> authorites = new HashSet<>();
-        authorites.add(userRole);
-
-        return userRepository.save(new ApplicationUser(0, username, encodedPassword, authorites));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(userRole);
+        return userRepository.save(new ApplicationUser(0, username, encodedPassword, authorities));
     }
 
     public ResponseDTO<LoginResponseDTO> loginUser(String username, String password) throws ParseException {
 
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
-        System.out.println("check auth...." + auth.toString());
+        Authentication auth = null;
+        try {
+            auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+            String token = tokenService.generateJwt(auth);
+            List<String> tempMenuList = new ArrayList<>();
+            List<String> tempAuthList = new ArrayList<>();
+            LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
+                    userRepository.findByUsername(username).get(),
+                    token,
+                    JWTUtils.getExpirationTime(token).getTime(),
+                    tempMenuList,
+                    tempAuthList);
 
-        String token = tokenService.generateJwt(auth);
-
-        List<String> tempMenuList = new ArrayList<>();
-        List<String> tempAuthList = new ArrayList<>();
-
-//        private ApplicationUser user;
-//        private String token;
-//        private Long expiredTime;
-//        private List<String> menus;
-//        private List<String> uniqueAuth;
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
-                userRepository.findByUsername(username).get(),
-                token,
-                JWTUtils.getExpirationTime(token).getTime(),
-                tempMenuList,
-                tempAuthList);
-
-        return new ResponseDTO<>(HttpStatus.OK.value(),
-                SuccessFailedEnum.SUCCESS.getStringValue(),
-                ReturnMessageEnum.LOGIN_SUCCESS_MESSAGE.getStringValue(),
-                loginResponseDTO);
-
+            return new ResponseDTO<>(HttpStatus.OK.value(),
+                    SuccessFailedEnum.SUCCESS.getStringValue(),
+                    ReturnMessageEnum.LOGIN_SUCCESS_MESSAGE.getStringValue(),
+                    loginResponseDTO);
+        } catch (AuthenticationException e) {
+            return new ResponseDTO<>(200, "Success", e.getMessage(), null);
+        }
     }
-
-
 }

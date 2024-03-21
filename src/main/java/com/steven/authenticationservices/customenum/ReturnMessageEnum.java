@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ReturnMessageEnum {
     LOGIN_SUCCESS_MESSAGE("Login Success"),
-    LOGIN_FAILED_MESSAGE("Login Failed");
+    LOGIN_FAILED_MESSAGE("Login Failed : wrong credentials");
 
     // Getter method to retrieve the string value
     // String value associated with each enum constant
