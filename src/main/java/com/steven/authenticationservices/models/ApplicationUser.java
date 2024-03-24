@@ -1,9 +1,8 @@
 package com.steven.authenticationservices.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,14 +14,20 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class ApplicationUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
+    @NonNull
     private Integer userId;
+
     @Column(unique = true)
+    @NonNull
     private String username;
+
+    @NonNull
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -31,7 +36,12 @@ public class ApplicationUser implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
+    @NonNull
     private Set<Role> authorities;
+
+    @Transient
+    private Set<String> menus;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Set;
+
 
 @Entity
 @Table(name = "roles")
@@ -18,6 +20,14 @@ public class Role implements GrantedAuthority {
     private Integer roleId;
 
     private String authority;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "role_menu_junction",
+            joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "menu_id")}
+    )
+    private Set<Menu> menus;
 
     public Role(String role) {
         this.authority = role;

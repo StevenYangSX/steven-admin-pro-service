@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Optional<ApplicationUser> userDetails = userRepository.findByUsername(username);
-
+        
         if (userDetails.isPresent()) {
             // TODO 查看权限 角色 等信息.....
             return userDetails.get();
