@@ -5,6 +5,7 @@ import com.steven.authenticationservices.customenum.SuccessFailedEnum;
 import com.steven.authenticationservices.dto.LoginResponseDTO;
 import com.steven.authenticationservices.dto.ResponseDTO;
 import com.steven.authenticationservices.models.ApplicationUser;
+import com.steven.authenticationservices.models.Menu;
 import com.steven.authenticationservices.models.Role;
 import com.steven.authenticationservices.repository.RoleRepository;
 import com.steven.authenticationservices.repository.UserRepository;
@@ -15,15 +16,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -60,11 +60,22 @@ public class AuthenticationService {
             auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
-            String token = tokenService.generateJwt(auth);
-            List<String> tempMenuList = new ArrayList<>();
-            List<String> tempAuthList = new ArrayList<>();
+
+            ApplicationUser currentUserInfo = userRepository.findByUsername(username).get();
+
+            String token = tokenService.generateJwt(auth,currentUserInfo);
+
+
+
+            Collection<? extends GrantedAuthority> authorities = currentUserInfo.getAuthorities();
+
+            Set<Menu> tempMenuList =  currentUserInfo.getMenus();
+
+            Set<String> tempAuthList = tempMenuList.stream().map(Menu::getUniqAuth)
+                    .collect(Collectors.toSet());
+
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
-                    userRepository.findByUsername(username).get(),
+                    currentUserInfo,
                     token,
                     JWTUtils.getExpirationTime(token).getTime(),
                     tempMenuList,

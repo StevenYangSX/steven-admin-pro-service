@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +18,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE menu SET deleted = true WHERE menu_id=?")
+@Where(clause = "deleted=0")
 public class Menu {
 
     @Id
@@ -19,23 +27,32 @@ public class Menu {
     @Column(name = "menu_id")
     private Integer menuId;
 
-    private Integer parentId;
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer parentId=0;
 
     @Column(unique = true)
     private String menuName;
 
-    private Integer sort;
+    @Column(unique = true)
+    private String path;
 
-    private String perms;
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer sort=0;
 
-    private Integer menuType;
+    private String uniqAuth;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer menuType=0;
 
     private String icon;
 
-    private Integer deleted;
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer deleted=0;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
 }

@@ -1,13 +1,17 @@
 package com.steven.authenticationservices.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -28,6 +32,7 @@ public class ApplicationUser implements UserDetails {
     private String username;
 
     @NonNull
+    @JsonIgnore
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -40,22 +45,36 @@ public class ApplicationUser implements UserDetails {
     private Set<Role> authorities;
 
     @Transient
-    private Set<String> menus;
+    @JsonIgnore
+    private Set<Menu> menus = new HashSet<>();
+
+    public ApplicationUser(String admin, String password, Set<Role> roles) {
+    }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
+
+            HashSet<GrantedAuthority> result = new HashSet<>();
+
+            for(Role role : authorities) {
+                result.add(new SimpleGrantedAuthority(role.getAuthority()));
+                this.menus.addAll(role.getMenus());
+            }
+            if(!result.isEmpty()) {
+               return result;
+            }
+        return null;
     }
 
     @Override
 
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return this.password;
     }
 
     @Override
-    public String getUsername() {
+    public @NonNull String getUsername() {
         return this.username;
     }
 
