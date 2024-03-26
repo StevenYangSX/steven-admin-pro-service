@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("health/auth").hasRole("ADMIN");
                     auth.requestMatchers("/admin/**").permitAll();
                     auth.requestMatchers("/user/**").hasAnyRole("ADMIN", "USER");
+                    auth.requestMatchers("/systemMenu/**").authenticated();
                     auth.anyRequest().authenticated();
                 });
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());

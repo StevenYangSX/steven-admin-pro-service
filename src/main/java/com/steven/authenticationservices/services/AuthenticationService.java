@@ -69,6 +69,8 @@ public class AuthenticationService {
 
             Collection<? extends GrantedAuthority> authorities = currentUserInfo.getAuthorities();
 
+            //TODO 存入缓存 Redis
+
             Set<Menu> tempMenuList =  currentUserInfo.getMenus();
 
             Set<String> tempAuthList = tempMenuList.stream().map(Menu::getUniqAuth)
@@ -86,7 +88,7 @@ public class AuthenticationService {
                     ReturnMessageEnum.LOGIN_SUCCESS_MESSAGE.getStringValue(),
                     loginResponseDTO);
         } catch (AuthenticationException e) {
-            return new ResponseDTO<>(200, "Success", e.getMessage(), null);
+            return new ResponseDTO<>(400001, "Success", e.getMessage(), null);
         }
     }
 }
